@@ -42,7 +42,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue()
+            public void SimpleValue()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -58,7 +58,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValueWithEscapedSeparator()
+            public void SimpleValueWithEscapedSeparator()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -74,7 +74,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue_PlusOneKevap()
+            public void SimpleValue_PlusOneKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -94,7 +94,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue_PlusTwoKevap()
+            public void SimpleValue_PlusTwoKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -117,7 +117,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue_PlusOneEmptyKevap()
+            public void SimpleValue_PlusOneEmptyKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -137,7 +137,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue_PlusOneEmptyEqualKevap()
+            public void SimpleValue_PlusOneEmptyEqualKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -157,7 +157,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleEmptyValue_PlusTwoKevap()
+            public void SimpleEmptyValue_PlusTwoKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -180,7 +180,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleEmptyEqualValue_PlusTwoKevap()
+            public void SimpleEmptyEqualValue_PlusTwoKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -203,7 +203,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue_PlusTwoEmptyKevap()
+            public void SimpleValue_PlusTwoEmptyKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -226,7 +226,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue_PlusTwoEmptyEqualKevap()
+            public void SimpleValue_PlusTwoEmptyEqualKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -249,7 +249,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue_PlusOneEmptyKevapAndOneEmptyEqualKevap()
+            public void SimpleValue_PlusOneEmptyKevapAndOneEmptyEqualKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
@@ -272,7 +272,7 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void PrefixOk_SimpleValue_PlusOneEmptyKevap_EndsWithSemicolon()
+            public void SimpleValue_PlusOneEmptyKevap_EndsWithSemicolon()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
