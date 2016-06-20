@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SrkSekvap", "SrkSekvap\SrkSekvap.csproj", "{BC272B68-76BB-469F-8E78-D6FB58FEC8E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SrkSekvap.Tests", "SrkSekvap.Tests\SrkSekvap.Tests.csproj", "{7CAEC196-A950-4431-8B58-DD8C4003043C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9CF85DD0-014C-4EC8-B81C-F201CFB5428B}"
+	ProjectSection(SolutionItems) = preProject
+		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC272B68-76BB-469F-8E78-D6FB58FEC8E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC272B68-76BB-469F-8E78-D6FB58FEC8E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC272B68-76BB-469F-8E78-D6FB58FEC8E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC272B68-76BB-469F-8E78-D6FB58FEC8E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CAEC196-A950-4431-8B58-DD8C4003043C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CAEC196-A950-4431-8B58-DD8C4003043C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CAEC196-A950-4431-8B58-DD8C4003043C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CAEC196-A950-4431-8B58-DD8C4003043C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
