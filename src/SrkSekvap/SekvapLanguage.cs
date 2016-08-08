@@ -4,13 +4,38 @@ namespace SrkSekvap
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
 
+    /// <summary>
+    /// Sekvap serializer.
+    /// See https://github.com/sandrock/Sekvap-dotnet for more information.
+    /// </summary>
     public class SekvapLanguage
     {
+        /// <summary>
+        /// chars that need escaping when serializing a key.
+        /// </summary>
+        private static readonly char[] keyChars = new char[] { '=', ';', };
+
+        /// <summary>
+        /// chars that need escaping when serializing a value.
+        /// </summary>
+        private static readonly char[] valueChars = new char[] { ';', };
+
         public SekvapLanguage()
         {
         }
 
+        public static void AddToResult(List<KeyValuePair<string, string>> collection, string key, string value)
+        {
+            collection.Add(new KeyValuePair<string, string>(key, value));
+        }
+
+        /// <summary>
+        /// Parse a string.
+        /// </summary>
+        /// <param name="value">the value to parse</param>
+        /// <returns>a collection of key-value pairs</returns>
         public IList<KeyValuePair<string, string>> Parse(string value)
         {
             if (value == null)
@@ -90,9 +115,150 @@ namespace SrkSekvap
             return result;
         }
 
-        public static void AddToResult(List<KeyValuePair<string, string>> collection, string key, string value)
+        /// <summary>
+        /// Serializes a set of key-value pairs in Sekvap.
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns>a Sekvap value</returns>
+        public string Serialize(IEnumerable<KeyValuePair<string, string>> values)
         {
-            collection.Add(new KeyValuePair<string, string>(key, value));
+            if (values == null)
+                throw new ArgumentNullException("values");
+
+            if (values is ICollection<KeyValuePair<string, string>>)
+            {
+                return this.Serialize((ICollection<KeyValuePair<string, string>>)values);
+            }
+
+            var sb = new StringBuilder();
+            int i = 0;
+            foreach (var item in values)
+            {
+                if (!(i++ == 0 && "Value".Equals(item.Key)))
+                {
+                    sb.Append(";");
+                }
+
+                EscapeKey(item.Key, sb);
+                sb.Append("=");
+                EscapeValue(item.Value, sb);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Serializes a collection of key-value pairs in Sekvap.
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns>a Sekvap value</returns>
+        public string Serialize(ICollection<KeyValuePair<string, string>> values)
+        {
+            if (values == null)
+                throw new ArgumentNullException("values");
+
+            var sb = new StringBuilder();
+            int i = -1, skip = -1;
+            foreach (var item in values)
+            {
+                i++;
+                if ("Value".Equals(item.Key))
+                {
+                    skip = i;
+                    EscapeValue(item.Value, sb);
+                    break;
+                }
+            }
+
+            i = -1;
+            foreach (var item in values)
+            {
+                i++;
+                if (skip == i)
+                    continue;
+
+                sb.Append(";");
+                EscapeKey(item.Key, sb);
+                sb.Append("=");
+                EscapeValue(item.Value, sb);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string EscapeKey(string value)
+        {
+            return EscapeKey(value, null);
+        }
+
+        private static string EscapeKey(string value, StringBuilder sb)
+        {
+            if (string.IsNullOrEmpty(value))
+                throw new ArgumentException("The value cannot be empty", "value");
+
+            var pos = value.IndexOfAny(keyChars);
+            if (pos < 0)
+            {
+                if (sb != null)
+                {
+                    sb.Append(value);
+                }
+
+                return value;
+            }
+
+            sb = sb ?? new StringBuilder(value.Length + 2);
+            for (int i = 0; i < value.Length; i++)
+            {
+                var c = value[i];
+                if (keyChars.Contains(c))
+                {
+                    sb.Append(c);
+                }
+
+                sb.Append(c);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string EscapeValue(string value)
+        {
+            if (value == null)
+                return null;
+
+            return EscapeValue(value, null);
+        }
+
+        private static string EscapeValue(string value, StringBuilder sb)
+        {
+            if (value == null)
+                return null;
+
+            var pos = value.IndexOfAny(valueChars);
+            if (pos < 0)
+            {
+                if (sb != null)
+                {
+                    sb.Append(value);
+                }
+
+                return value;
+            }
+
+            sb = sb ?? new StringBuilder(value.Length + 2);
+            for (int i = 0; i < value.Length; i++)
+            {
+                var c = value[i];
+                if (keyChars.Contains(c))
+                {
+                    sb.Append(c);
+                }
+
+                sb.Append(c);
+            }
+
+            return sb.ToString();
         }
     }
 }

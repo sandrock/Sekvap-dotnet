@@ -2,8 +2,10 @@
 namespace SrkSekvap.Tests
 {
     using System;
+    using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using SrkSekvap;
+    using System.Collections.Generic;
 
     [TestClass]
     public class SekvapLanguageTests
@@ -290,6 +292,120 @@ namespace SrkSekvap.Tests
                 Assert.AreEqual(parts[0], result[i].Value);
                 Assert.AreEqual(parts[2], result[++i].Key);
                 Assert.AreEqual(null, result[i].Value);
+            }
+        }
+
+        [TestClass]
+        public class SerializeEnumerableMethod
+        {
+            [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+            public void Arg0IsNull_Throws()
+            {
+                var target = new SekvapLanguage();
+                target.Serialize(default(IEnumerable<KeyValuePair<string, string>>));
+            }
+
+            [TestMethod]
+            public void NoValues()
+            {
+                var source = new List<KeyValuePair<string, string>>();
+                var target = new SekvapLanguage();
+                var result = target.Serialize(source.AsEnumerable());
+                Assert.IsNotNull(result);
+                Assert.AreEqual(0, result.Length);
+            }
+
+            [TestMethod]
+            public void Value()
+            {
+                var source = new Dictionary<string, string>();
+                source.Add("Value", "Hello");
+                var target = new SekvapLanguage();
+                var result = target.Serialize(source.AsEnumerable());
+                Assert.IsNotNull(result);
+                Assert.AreEqual("Hello", result);
+            }
+
+            [TestMethod]
+            public void Value_Item()
+            {
+                var source = new Dictionary<string, string>();
+                source.Add("Value", "Hello");
+                source.Add("Foo", "Bar");
+                var target = new SekvapLanguage();
+                var result = target.Serialize(source.AsEnumerable());
+                Assert.IsNotNull(result);
+                Assert.AreEqual("Hello;Foo=Bar", result);
+            }
+
+            [TestMethod]
+            public void Value_Item_Value()
+            {
+                var source = new List<KeyValuePair<string, string>>();
+                source.Add(new KeyValuePair<string, string>("Value", "Hello"));
+                source.Add(new KeyValuePair<string, string>("Foo", "Bar"));
+                source.Add(new KeyValuePair<string, string>("Value", "Yop"));
+                var target = new SekvapLanguage();
+                var result = target.Serialize(source.AsEnumerable());
+                Assert.IsNotNull(result);
+                Assert.AreEqual("Hello;Foo=Bar;Value=Yop", result);
+            }
+        }
+
+        [TestClass]
+        public class SerializeCollectionMethod
+        {
+            [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+            public void Arg0IsNull_Throws()
+            {
+                var target = new SekvapLanguage();
+                target.Serialize(default(ICollection<KeyValuePair<string, string>>));
+            }
+
+            [TestMethod]
+            public void NoValues()
+            {
+                var source = new List<KeyValuePair<string, string>>();
+                var target = new SekvapLanguage();
+                var result = target.Serialize(source);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(0, result.Length);
+            }
+
+            [TestMethod]
+            public void Value()
+            {
+                var source = new Dictionary<string, string>();
+                source.Add("Value", "Hello");
+                var target = new SekvapLanguage();
+                var result = target.Serialize(source);
+                Assert.IsNotNull(result);
+                Assert.AreEqual("Hello", result);
+            }
+
+            [TestMethod]
+            public void Value_Item()
+            {
+                var source = new Dictionary<string, string>();
+                source.Add("Value", "Hello");
+                source.Add("Foo", "Bar");
+                var target = new SekvapLanguage();
+                var result = target.Serialize(source);
+                Assert.IsNotNull(result);
+                Assert.AreEqual("Hello;Foo=Bar", result);
+            }
+
+            [TestMethod]
+            public void Value_Item_Value()
+            {
+                var source = new List<KeyValuePair<string, string>>();
+                source.Add(new KeyValuePair<string, string>("Value", "Hello"));
+                source.Add(new KeyValuePair<string, string>("Foo", "Bar"));
+                source.Add(new KeyValuePair<string, string>("Value", "Yop"));
+                var target = new SekvapLanguage();
+                var result = target.Serialize(source);
+                Assert.IsNotNull(result);
+                Assert.AreEqual("Hello;Foo=Bar;Value=Yop", result);
             }
         }
     }
