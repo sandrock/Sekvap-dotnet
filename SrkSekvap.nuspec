@@ -1,0 +1,28 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>SrkSekvap</id>
+    <version>1.0.0</version>
+    <title>Sekvap-dotnet</title>
+    <authors>SandRock, HiinoFW</authors>
+    <owners>SandRock</owners>
+    <licenseUrl>https://github.com/sandrock/Sekvap-dotnet/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/sandrock/Sekvap-dotnet</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<summary>A simple Key/Value language "Sekvap" implemented for .NET.</summary>
+    <description><![CDATA[This thing converts this kind of strings into a IList<KeyValuePair<string, string>>.
+
+Main value;Key1=Value 1;Key2=Value 2;Key2=Value 2 again
+
+Why Sekvap?
+
+Sekvap is easy to read, easy to parse and easy to store.
+
+Sekvap is lighter than JSON or XML. It does not provide any depth though.
+
+License: LGPL.]]></description>
+    <releaseNotes><![CDATA[- Initial version]]></releaseNotes>
+    <copyright>Copyright © SandRock 2015</copyright>
+    <tags>serializer sekvap key-value</tags>
+  </metadata>
+</package>
