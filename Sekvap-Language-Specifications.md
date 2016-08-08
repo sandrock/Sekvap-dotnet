@@ -1,0 +1,5 @@
+﻿
+Sekvap language specifications
+===============================
+
+TODO

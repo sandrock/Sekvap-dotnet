@@ -254,3 +254,4 @@ paket-files/
 build/
 
 
+tools/nuget.exe
