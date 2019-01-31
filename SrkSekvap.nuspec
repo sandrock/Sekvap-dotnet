@@ -8,6 +8,7 @@
     <owners>SandRock</owners>
     <licenseUrl>https://github.com/sandrock/Sekvap-dotnet/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/sandrock/Sekvap-dotnet</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/sandrock/Sekvap-dotnet/master/res/logo-200.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
 	<summary>A simple Key/Value language "Sekvap" implemented for .NET.</summary>
     <description><![CDATA[This thing converts this kind of strings into a IList<KeyValuePair<string, string>>.

@@ -58,7 +58,7 @@ namespace SrkSekvap
                 throw new ArgumentNullException("value");
 
             var result = new List<KeyValuePair<string, string>>();
-            bool isStart = true, isKey = false, isValue = false, isEnd = false;
+            bool isStart = true, isKey = true, isValue = false, isEnd = false;
             string capturedKey = null;
             int captureStartIndex = 0, captureEndIndex, captureLength;
             for (int i = captureStartIndex; i <= value.Length; i++)
@@ -94,9 +94,11 @@ namespace SrkSekvap
                         isStart = false;
                         isKey = true;
                         captureStartIndex = i;
+                        continue;
                     }
                 }
-                else if (isKey)
+                
+                if (isKey)
                 {
                     if ((c == '=' && cp1 == '=') || (c == ';' && cp1 == ';'))
                     {
@@ -115,14 +117,17 @@ namespace SrkSekvap
                             capturedKey = value.Substring(captureStartIndex, captureLength);
                             AddToResult(result, capturedKey, null);
                         }
+
                         isValue = false;
                         captureStartIndex = i + 1;
+                        continue;
                     }
                     else if (c == '=' && cp1 != '=')
                     {
                         // end of start part
                         capturedKey = value.Substring(captureStartIndex, captureLength);
                         isValue = true;
+                        isStart = false;
                         captureStartIndex = i + 1;
                     }
                 }

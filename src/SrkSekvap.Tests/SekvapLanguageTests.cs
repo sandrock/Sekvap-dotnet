@@ -309,6 +309,39 @@ namespace SrkSekvap.Tests
                 Assert.AreEqual(parts[2], result[++i].Key);
                 Assert.AreEqual(null, result[i].Value);
             }
+
+            [TestMethod]
+            public void ConnectionString1()
+            {
+                var lang = new SekvapLanguage();
+                var parts = new string[]
+                {
+                    "Data Source", "=", "myServerAddress", ";", 
+                    "Initial Catalog", "=", "myDataBase", ";", 
+                    "Integrated Security", "=", "SSPI", ";", 
+                    "User ID", "=", "myDomain\\myUsername", ";", 
+                    "Password", "=", "myPass==word", ";",
+                };
+                string input = string.Concat(parts);
+                var result = lang.Parse(input);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(6, result.Count);
+                int i = -1;
+                ////Assert.AreEqual("Value", result[++i].Key); // Value = 
+                ////Assert.AreEqual(null, result[i].Value); //       = null
+                Assert.AreEqual(parts[0], result[++i].Key); // Data Source = 
+                Assert.AreEqual(parts[2], result[i].Value); //             = myServerAddress
+                Assert.AreEqual(parts[4], result[++i].Key); // Initial Catalog = 
+                Assert.AreEqual(parts[6], result[i].Value); //                 = myDataBase
+                Assert.AreEqual(parts[8], result[++i].Key); // Integrated Security = 
+                Assert.AreEqual(parts[10], result[i].Value); //                     = SSPI
+                Assert.AreEqual(parts[12], result[++i].Key); // User ID =
+                Assert.AreEqual(parts[14], result[i].Value); //         = myDomain\\myUsername
+                Assert.AreEqual(parts[16], result[++i].Key); // Password = 
+                Assert.AreEqual(parts[18], result[i].Value); //          = myPass==word
+                Assert.AreEqual("", result[++i].Key); // "" = 
+                Assert.AreEqual(null, result[i].Value); //       = null
+            }
         }
 
         [TestClass]

@@ -3,15 +3,13 @@
 
 ![Sekvap logo](https://raw.githubusercontent.com/sandrock/Sekvap-dotnet/master/res/logo-64.png)
 
-A simple Key/Value language "Sekvap" implemented for .NET.
+A simple Key/Value language "Sekvap" implemented for .NET. [Nuget.org/SrkSekvap/](https://www.nuget.org/packages/SrkSekvap/)
 
 This thing converts this kind of strings into a `IList<KeyValuePair<string, string>>`.
 
 ```
 Main value;Key1=Value 1;Key2=Value 2;Key2=Value 2 again;
-```
 
-```
 Data Source=myServerAddress;Initial Catalog=myDataBase;Integrated Security=SSPI;User ID=myDomain\myUsername;Password=myPassword;
 ```
 
@@ -46,6 +44,8 @@ public void SimpleEmptyEqualValue_PlusTwoKevap()
 }
 ```
 
+You may look at the [other tests](src/SrkSekvap.Tests/SekvapLanguageTests.cs).
+
 Why Sekvap?
 --------------
 
@@ -67,14 +67,17 @@ Install
 To Do list
 --------------
 
-- [x] Deserialize
-- [x] Serialize
-- [ ] Language specifications
-- [x] nuget package
+- [x] Parse (string to IList&lt;KeyValuePair&lt;string, string>>)
+- [x] Serialize (IEnumerable&lt;KeyValuePair&lt;string, string>> to string)
+- [x] nuget package [Nuget.org/SrkSekvap/](https://www.nuget.org/packages/SrkSekvap/)
+- [ ] Deserialize (string to typed object)
+- [ ] Serialize (typed object to string)
+- [ ] [Language specifications](Sekvap-Language-Specifications.md)
 
 
 Contribute
 --------------
 
 Open to contributions via issues and PRs.
+
 
