@@ -1,9 +1,11 @@
-﻿
+
 # Sekvap-dotnet
 
 ![Sekvap logo](https://raw.githubusercontent.com/sandrock/Sekvap-dotnet/master/res/logo-64.png)
 
 A simple Key/Value language "Sekvap" implemented for .NET. [Nuget.org/SrkSekvap/](https://www.nuget.org/packages/SrkSekvap/)
+
+See also: [Sekvap-java](https://github.com/sandrock/Sekvap-java/)
 
 This thing converts this kind of strings into a `IList<KeyValuePair<string, string>>`.
 
