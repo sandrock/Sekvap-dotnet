@@ -1,4 +1,5 @@
 ﻿// Sekvap-dotnet
+//
 // Copyright (C) 2015 SandRock
 // Copyright (C) 2015 HiinoFW
 // 
@@ -38,9 +39,27 @@ namespace SrkSekvap
         /// </summary>
         private static readonly char[] valueChars = new char[] { ';', };
 
+        private const char escape = '\\';
+
+        private bool allowSelfEscape = false;
+
         public SekvapLanguage()
         {
         }
+
+        /// <summary>
+        /// EXPERIMENTAL. Enabling this will use the old self-escape rule. Not recommanded because not tested.
+        /// </summary>
+        public bool AllowSelfEscape
+        {
+            get { return this.allowSelfEscape; }
+            set { this.allowSelfEscape = value; }
+        }
+
+        /// <summary>
+        /// For unit tests. When false, empty kevaps will be serialized too.
+        /// </summary>
+        public bool SkipSerializeEmpty { get; set; } = true;
 
         public static void AddToResult(List<KeyValuePair<string, string>> collection, string key, string value)
         {
@@ -61,11 +80,14 @@ namespace SrkSekvap
             bool isStart = true, isKey = true, isValue = false, isEnd = false;
             string capturedKey = null;
             int captureStartIndex = 0, captureEndIndex, captureLength;
+            var sb = new StringBuilder();
             for (int i = captureStartIndex; i <= value.Length; i++)
             {
+                // prepare current char
                 char c, cp1;
                 if (i == value.Length)
                 {
+                    // prepare for last char
                     c = char.MinValue;
                     cp1 = char.MinValue;
                     isEnd = true;
@@ -74,6 +96,7 @@ namespace SrkSekvap
                 }
                 else
                 {
+                    // prepare for any other char
                     c = value[i];
                     cp1 = (i + 1) < value.Length ? value[i + 1] : char.MinValue;
                     captureEndIndex = i;
@@ -82,15 +105,38 @@ namespace SrkSekvap
 
                 if (isStart)
                 {
-                    if (c == ';' && cp1 == ';')
+                    if (allowSelfEscape && c == ';' && cp1 == ';')
                     {
-                        i++;
+                        // reached a self-escaped ;
+                        ////i++;
                     }
-                    else if (c == ';' && cp1 != ';' || isEnd)
+                    else if (c == '\\' && cp1 == ';')
                     {
-                        // end of start part
-                        AddToResult(result, "Value", value.Substring(captureStartIndex, captureLength));
+                        // reached a slash-escaped ;
+                        ////sb.Append(cp1);
+                        ////i++;
+                    }
+                    else if (allowSelfEscape && (c == ';' && cp1 != ';' || isEnd))
+                    {
+                        // end of start value
+                        var capturedValue = value.Substring(captureStartIndex, captureLength);
+                        capturedValue = sb.ToString();
+                        sb.Clear();
+                        AddToResult(result, "Value", capturedValue);
                         i++;
+                        isStart = false;
+                        isKey = true;
+                        captureStartIndex = i;
+                        sb.Append(cp1);
+                        continue;
+                    }
+                    else if (!allowSelfEscape && (c == ';' || isEnd))
+                    {
+                        // end of start value
+                        var capturedValue = value.Substring(captureStartIndex, captureLength);
+                        capturedValue = sb.ToString();
+                        sb.Clear();
+                        AddToResult(result, "Value", capturedValue);
                         isStart = false;
                         isKey = true;
                         captureStartIndex = i;
@@ -100,21 +146,31 @@ namespace SrkSekvap
                 
                 if (isKey)
                 {
-                    if ((c == '=' && cp1 == '=') || (c == ';' && cp1 == ';'))
+                    if (allowSelfEscape && ((c == '=' && cp1 == '=') || (c == ';' && cp1 == ';')))
                     {
+                        sb.Append(cp1);
                         i++;
                     }
-                    else if (c == ';' && cp1 != ';' || isEnd)
+                    else if (!allowSelfEscape && ((c == '\\' && cp1 == '=') || (c == '\\' && cp1 == ';')))
+                    {
+                        sb.Append(cp1);
+                        i++;
+                    }
+                    else if ((c == ';' && cp1 != ';') || (c == ';' && cp1 == ';' && !allowSelfEscape) || isEnd)
                     {
                         if (isValue)
                         {
                             // end of start part
                             var capturedValue = value.Substring(captureStartIndex, captureLength);
+                            capturedValue = sb.ToString();
+                            sb.Clear();
                             AddToResult(result, capturedKey, capturedValue);
                         }
                         else
                         {
                             capturedKey = value.Substring(captureStartIndex, captureLength);
+                            capturedKey = sb.ToString();
+                            sb.Clear();
                             AddToResult(result, capturedKey, null);
                         }
 
@@ -126,9 +182,15 @@ namespace SrkSekvap
                     {
                         // end of start part
                         capturedKey = value.Substring(captureStartIndex, captureLength);
+                        capturedKey = sb.ToString();
+                        sb.Clear();
                         isValue = true;
                         isStart = false;
                         captureStartIndex = i + 1;
+                    }
+                    else
+                    {
+                        sb.Append(c);
                     }
                 }
             }
@@ -198,43 +260,56 @@ namespace SrkSekvap
                 if (skip == i)
                     continue;
 
-                sb.Append(";");
-                EscapeKey(item.Key, sb);
-                sb.Append("=");
-                EscapeValue(item.Value, sb);
+                if (sb.Length > 0)
+                {
+                    sb.Append(";"); 
+                }
+
+                if (string.IsNullOrEmpty(item.Key) && string.IsNullOrEmpty(item.Value) && this.SkipSerializeEmpty)
+                {
+                }
+                else
+                {
+                    EscapeKey(item.Key, sb);
+                    if (!string.IsNullOrEmpty(item.Value))
+                    {
+                        sb.Append("=");
+                        EscapeValue(item.Value, sb);
+                    }
+                }
             }
 
             return sb.ToString();
         }
 
-        private static string EscapeKey(string value)
+        private string EscapeKey(string value)
         {
             return EscapeKey(value, null);
         }
 
-        private static string EscapeKey(string value, StringBuilder sb)
+        private string EscapeKey(string key, StringBuilder sb)
         {
-            if (string.IsNullOrEmpty(value))
-                throw new ArgumentException("The value cannot be empty", "value");
+            if (key == null)
+                throw new ArgumentNullException("key");
 
-            var pos = value.IndexOfAny(keyChars);
+            var pos = key.IndexOfAny(keyChars);
             if (pos < 0)
             {
                 if (sb != null)
                 {
-                    sb.Append(value);
+                    sb.Append(key);
                 }
 
-                return value;
+                return key;
             }
 
-            sb = sb ?? new StringBuilder(value.Length + 2);
-            for (int i = 0; i < value.Length; i++)
+            sb = sb ?? new StringBuilder(key.Length + 2);
+            for (int i = 0; i < key.Length; i++)
             {
-                var c = value[i];
+                var c = key[i];
                 if (keyChars.Contains(c))
                 {
-                    sb.Append(c);
+                    sb.Append(allowSelfEscape ? c : '\\');
                 }
 
                 sb.Append(c);
@@ -243,7 +318,7 @@ namespace SrkSekvap
             return sb.ToString();
         }
 
-        private static string EscapeValue(string value)
+        private string EscapeValue(string value)
         {
             if (value == null)
                 return null;
@@ -251,7 +326,7 @@ namespace SrkSekvap
             return EscapeValue(value, null);
         }
 
-        private static string EscapeValue(string value, StringBuilder sb)
+        private string EscapeValue(string value, StringBuilder sb)
         {
             if (value == null)
                 return null;
@@ -273,7 +348,7 @@ namespace SrkSekvap
                 var c = value[i];
                 if (keyChars.Contains(c))
                 {
-                    sb.Append(c);
+                    sb.Append(allowSelfEscape ? c : '\\');
                 }
 
                 sb.Append(c);
