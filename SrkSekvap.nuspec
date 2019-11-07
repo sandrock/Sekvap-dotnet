@@ -6,11 +6,13 @@
     <title>Sekvap-dotnet</title>
     <authors>SandRock, HiinoFW</authors>
     <owners>SandRock</owners>
-    <licenseUrl>https://github.com/sandrock/Sekvap-dotnet/blob/master/LICENSE</licenseUrl>
+    <!--<licenseUrl>https://github.com/sandrock/Sekvap-dotnet/blob/master/LICENSE</licenseUrl>-->
+    <license type="expression">LGPL-3.0-or-later</license>
     <projectUrl>https://github.com/sandrock/Sekvap-dotnet</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/sandrock/Sekvap-dotnet/master/res/logo-200.png</iconUrl>
+    <icon>images/icon.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-	<summary>A simple Key/Value language "Sekvap" implemented for .NET.</summary>
+    <summary>A simple Key/Value language "Sekvap" implemented for .NET.</summary>
     <description><![CDATA[This thing converts this kind of strings into a IList<KeyValuePair<string, string>>.
 
 Main value;Key1=Value 1;Key2=Value 2;Key2=Value 2 again
@@ -22,8 +24,11 @@ Sekvap is easy to read, easy to parse and easy to store.
 Sekvap is lighter than JSON or XML. It does not provide any depth though.
 
 License: LGPL.]]></description>
-    <releaseNotes><![CDATA[- Initial version]]></releaseNotes>
+    <releaseNotes><![CDATA[Breaking change for escape sequences! Now escape char is backslash!]]></releaseNotes>
     <copyright>Copyright © SandRock 2015</copyright>
     <tags>serializer sekvap key-value</tags>
+    <dependencies>
+	  <group targetFramework=".NETPortable0.0-Profile344" />
+    </dependencies>
   </metadata>
 </package>

@@ -64,7 +64,7 @@ pause
 cd %rootDirectory%\src
 
 set solutionDirectory=%CD%
-%msbuild4% "SrkSekvap.sln" /p:Configuration=Release /nologo /verbosity:q
+%msbuild4% "SrkSekvap.sln" /p:Configuration=Release /nologo /verbosity:q /t:SrkSekvap
 
 if not %ERRORLEVEL% == 0 (
  echo ERROR: build failed. exiting.
@@ -87,6 +87,11 @@ if NOT EXIST %outputDirectory%\lib\%pclFx%  mkdir %outputDirectory%\lib\%pclFx%
 
 xcopy /Q /Y %solutionDirectory%\SrkSekvap\bin\Release\SrkSekvap.dll %outputDirectory%\lib\%pclFx%\
 xcopy /Q /Y %solutionDirectory%\SrkSekvap\bin\Release\SrkSekvap.xml %outputDirectory%\lib\%pclFx%\
+
+if NOT EXIST %outputDirectory%\images        mkdir %outputDirectory%\images
+
+copy /Y %rootDirectory%\res\logo-200.png %outputDirectory%\images\icon.png
+
 echo Done.
 
 
