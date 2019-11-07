@@ -61,7 +61,7 @@ namespace SrkSekvap
         /// </summary>
         public bool SkipSerializeEmpty { get; set; } = true;
 
-        public static void AddToResult(List<KeyValuePair<string, string>> collection, string key, string value)
+        public static void AddToResult(IList<KeyValuePair<string, string>> collection, string key, string value)
         {
             collection.Add(new KeyValuePair<string, string>(key, value));
         }
@@ -79,9 +79,8 @@ namespace SrkSekvap
             var result = new List<KeyValuePair<string, string>>();
             bool isStart = true, isKey = true, isValue = false, isEnd = false;
             string capturedKey = null;
-            int captureStartIndex = 0, captureEndIndex, captureLength;
             var sb = new StringBuilder();
-            for (int i = captureStartIndex; i <= value.Length; i++)
+            for (int i = 0; i <= value.Length; i++)
             {
                 // prepare current char
                 char c, cp1;
@@ -91,16 +90,12 @@ namespace SrkSekvap
                     c = char.MinValue;
                     cp1 = char.MinValue;
                     isEnd = true;
-                    captureEndIndex = i - 1;
-                    captureLength = i - captureStartIndex;
                 }
                 else
                 {
                     // prepare for any other char
                     c = value[i];
                     cp1 = (i + 1) < value.Length ? value[i + 1] : char.MinValue;
-                    captureEndIndex = i;
-                    captureLength = i - captureStartIndex;
                 }
 
                 if (isStart)
@@ -119,27 +114,23 @@ namespace SrkSekvap
                     else if (allowSelfEscape && (c == ';' && cp1 != ';' || isEnd))
                     {
                         // end of start value
-                        var capturedValue = value.Substring(captureStartIndex, captureLength);
-                        capturedValue = sb.ToString();
+                        var capturedValue = sb.ToString();
                         sb.Clear();
                         AddToResult(result, "Value", capturedValue);
                         i++;
                         isStart = false;
                         isKey = true;
-                        captureStartIndex = i;
                         sb.Append(cp1);
                         continue;
                     }
                     else if (!allowSelfEscape && (c == ';' || isEnd))
                     {
                         // end of start value
-                        var capturedValue = value.Substring(captureStartIndex, captureLength);
-                        capturedValue = sb.ToString();
+                        var capturedValue = sb.ToString();
                         sb.Clear();
                         AddToResult(result, "Value", capturedValue);
                         isStart = false;
                         isKey = true;
-                        captureStartIndex = i;
                         continue;
                     }
                 }
@@ -161,32 +152,27 @@ namespace SrkSekvap
                         if (isValue)
                         {
                             // end of start part
-                            var capturedValue = value.Substring(captureStartIndex, captureLength);
-                            capturedValue = sb.ToString();
+                            var capturedValue = sb.ToString();
                             sb.Clear();
                             AddToResult(result, capturedKey, capturedValue);
                         }
                         else
                         {
-                            capturedKey = value.Substring(captureStartIndex, captureLength);
                             capturedKey = sb.ToString();
                             sb.Clear();
                             AddToResult(result, capturedKey, null);
                         }
 
                         isValue = false;
-                        captureStartIndex = i + 1;
                         continue;
                     }
                     else if (c == '=' && cp1 != '=')
                     {
                         // end of start part
-                        capturedKey = value.Substring(captureStartIndex, captureLength);
                         capturedKey = sb.ToString();
                         sb.Clear();
                         isValue = true;
                         isStart = false;
-                        captureStartIndex = i + 1;
                     }
                     else
                     {
@@ -208,9 +194,10 @@ namespace SrkSekvap
             if (values == null)
                 throw new ArgumentNullException("values");
 
-            if (values is ICollection<KeyValuePair<string, string>>)
+            var collection = values as ICollection<KeyValuePair<string, string>>;
+            if (collection != null)
             {
-                return this.Serialize((ICollection<KeyValuePair<string, string>>)values);
+                return this.Serialize(collection);
             }
 
             var sb = new StringBuilder();
@@ -282,11 +269,6 @@ namespace SrkSekvap
             return sb.ToString();
         }
 
-        private string EscapeKey(string value)
-        {
-            return EscapeKey(value, null);
-        }
-
         private string EscapeKey(string key, StringBuilder sb)
         {
             if (key == null)
@@ -316,14 +298,6 @@ namespace SrkSekvap
             }
 
             return sb.ToString();
-        }
-
-        private string EscapeValue(string value)
-        {
-            if (value == null)
-                return null;
-
-            return EscapeValue(value, null);
         }
 
         private string EscapeValue(string value, StringBuilder sb)
