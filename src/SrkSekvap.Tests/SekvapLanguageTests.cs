@@ -629,6 +629,50 @@ namespace SrkSekvap.Tests
                 Assert.AreEqual(string.Empty, result[++i].Key);
                 Assert.AreEqual(null, result[i].Value);
             }
+
+            [TestMethod]
+            public void EqualSignInValue1()
+            {
+                var lang = new SekvapLanguage();
+                var parts = new string[]
+                {
+                    "hello world",
+                    ";", "Compare", "=", "=8",
+                };
+                string input = string.Join(string.Empty, parts);
+                var result = lang.Parse(input);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(2, result.Count);
+                int i = -1;
+
+                Assert.AreEqual("Value", result[++i].Key);
+                Assert.AreEqual(parts[0], result[i].Value);
+
+                Assert.AreEqual("Compare", result[++i].Key);
+                Assert.AreEqual("=8", result[i].Value);
+            }
+
+            [TestMethod]
+            public void EqualSignInValue2()
+            {
+                var lang = new SekvapLanguage();
+                var parts = new string[]
+                {
+                    "hello world",
+                    ";", "Compare", "=", "<=8",
+                };
+                string input = string.Join(string.Empty, parts);
+                var result = lang.Parse(input);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(2, result.Count);
+                int i = -1;
+
+                Assert.AreEqual("Value", result[++i].Key);
+                Assert.AreEqual(parts[0], result[i].Value);
+
+                Assert.AreEqual("Compare", result[++i].Key);
+                Assert.AreEqual("<=8", result[i].Value);
+            }
         }
 
         [TestClass]
