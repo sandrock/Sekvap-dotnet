@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>SrkSekvap</id>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <title>Sekvap-dotnet</title>
     <authors>SandRock, HiinoFW</authors>
     <owners>SandRock</owners>
@@ -24,7 +24,7 @@ Sekvap is easy to read, easy to parse and easy to store.
 Sekvap is lighter than JSON or XML. It does not provide any depth though.
 
 License: LGPL.]]></description>
-    <releaseNotes><![CDATA[Breaking change for escape sequences! Now escape char is backslash!]]></releaseNotes>
+    <releaseNotes><![CDATA[Fixed bug reported in commit 759fd381. Faster code. ]]></releaseNotes>
     <copyright>Copyright © SandRock 2015</copyright>
     <tags>serializer sekvap key-value</tags>
     <dependencies>
