@@ -132,6 +132,42 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
+            public void SimpleValueWithEscapedSeparator_Old_End()
+            {
+                var lang = new SekvapLanguage();
+                lang.AllowSelfEscape = true;
+                var parts = new string[]
+                {
+                    "hello;;",
+                };
+                string input = parts[0];
+                var result = lang.Parse(input);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(1, result.Count);
+
+                Assert.AreEqual("Value", result[0].Key);
+                Assert.AreEqual("hello;", result[0].Value);
+            }
+
+            [TestMethod]
+            public void SimpleValueWithEscapedSeparator_Old_Begin()
+            {
+                var lang = new SekvapLanguage();
+                lang.AllowSelfEscape = true;
+                var parts = new string[]
+                {
+                    ";;hello",
+                };
+                string input = parts[0];
+                var result = lang.Parse(input);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(1, result.Count);
+
+                Assert.AreEqual("Value", result[0].Key);
+                Assert.AreEqual(";hello", result[0].Value);
+            }
+
+            [TestMethod]
             public void SimpleValueWithEscapedSeparator()
             {
                 var lang = new SekvapLanguage();
@@ -268,7 +304,7 @@ namespace SrkSekvap.Tests
                 var lang = new SekvapLanguage();
                 var parts = new string[]
                 {
-                    "hello world",
+                    "helo",
                     ";", "Name", "=", "John Smith",
                     ";", "Foo", "=", "Bar",
                 };
@@ -631,47 +667,81 @@ namespace SrkSekvap.Tests
             }
 
             [TestMethod]
-            public void EqualSignInValue1()
+            public void EmptyKey0()
+            {
+                // a key cannot be empty. so this is a key starting with the equa sign.
+                var lang = new SekvapLanguage();
+                var input = "helo;=b;x=y";
+                var result = lang.Parse(input);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(3, result.Count);
+                int i = -1;
+
+                Assert.AreEqual("Value", result[++i].Key);
+                Assert.AreEqual("helo", result[i].Value);
+
+                Assert.AreEqual("=b", result[++i].Key);
+                Assert.AreEqual(null, result[i].Value);
+
+                Assert.AreEqual("x", result[++i].Key);
+                Assert.AreEqual("y", result[i].Value);
+            }
+
+            [TestMethod]
+            public void EqualSignInValue0()
             {
                 var lang = new SekvapLanguage();
-                var parts = new string[]
-                {
-                    "hello world",
-                    ";", "Compare", "=", "=8",
-                };
-                string input = string.Join(string.Empty, parts);
+                var input = "=8;x=y";
                 var result = lang.Parse(input);
                 Assert.IsNotNull(result);
                 Assert.AreEqual(2, result.Count);
                 int i = -1;
 
                 Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-
-                Assert.AreEqual("Compare", result[++i].Key);
                 Assert.AreEqual("=8", result[i].Value);
+
+                Assert.AreEqual("x", result[++i].Key);
+                Assert.AreEqual("y", result[i].Value);
+            }
+
+            [TestMethod]
+            public void EqualSignInValue1()
+            {
+                var lang = new SekvapLanguage();
+                var input = "helo;Comp==8;x=y";
+                var result = lang.Parse(input);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(3, result.Count);
+                int i = -1;
+
+                Assert.AreEqual("Value", result[++i].Key);
+                Assert.AreEqual("helo", result[i].Value);
+
+                Assert.AreEqual("Comp", result[++i].Key);
+                Assert.AreEqual("=8", result[i].Value);
+
+                Assert.AreEqual("x", result[++i].Key);
+                Assert.AreEqual("y", result[i].Value);
             }
 
             [TestMethod]
             public void EqualSignInValue2()
             {
                 var lang = new SekvapLanguage();
-                var parts = new string[]
-                {
-                    "hello world",
-                    ";", "Compare", "=", "<=8",
-                };
-                string input = string.Join(string.Empty, parts);
+                var input = "helo;Comp=<=8;x=y";
                 var result = lang.Parse(input);
                 Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.AreEqual(3, result.Count);
                 int i = -1;
 
                 Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.AreEqual("helo", result[i].Value);
 
-                Assert.AreEqual("Compare", result[++i].Key);
+                Assert.AreEqual("Comp", result[++i].Key);
                 Assert.AreEqual("<=8", result[i].Value);
+
+                Assert.AreEqual("x", result[++i].Key);
+                Assert.AreEqual("y", result[i].Value);
             }
         }
 

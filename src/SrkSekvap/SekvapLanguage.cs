@@ -77,106 +77,74 @@ namespace SrkSekvap
                 throw new ArgumentNullException("value");
 
             var result = new List<KeyValuePair<string, string>>();
-            bool isStart = true, isKey = true, isValue = false, isEnd = false;
-            string capturedKey = null;
+            bool isStart = true, isKey = false, isEnd = false;
+            string capturedKey = "Value", capturedValue = null;
             var sb = new StringBuilder();
-            for (int i = 0; i <= value.Length; i++)
+            char c1, c2, c3;
+            bool hasEqual;   // this helps set an empty string or null in a value
+            hasEqual = true; // this allows the start Value to be an empty string
+            int escapeCounter = 0;
+            for (int i = -1; i <= value.Length; i++)
             {
                 // prepare current char
-                char c, cp1;
-                if (i == value.Length)
-                {
-                    // prepare for last char
-                    c = char.MinValue;
-                    cp1 = char.MinValue;
-                    isEnd = true;
-                }
-                else
-                {
-                    // prepare for any other char
-                    c = value[i];
-                    cp1 = (i + 1) < value.Length ? value[i + 1] : char.MinValue;
-                }
+                c1 = (i < value.Length && i >= 0) ? value[i] : char.MinValue; // previous (for escape char)
+                c2 = ((i + 1) < value.Length) ? value[i + 1] : char.MinValue; // current  (for decision)
+                c3 = ((i + 2) < value.Length) ? value[i + 2] : char.MinValue; // next     (for self escape char)
+                isEnd = (i + 1) == value.Length;
+                escapeCounter--;
 
-                if (isStart)
-                {
-                    if (allowSelfEscape && c == ';' && cp1 == ';')
-                    {
-                        // reached a self-escaped ;
-                        ////i++;
-                    }
-                    else if (c == '\\' && cp1 == ';')
-                    {
-                        // reached a slash-escaped ;
-                        ////sb.Append(cp1);
-                        ////i++;
-                    }
-                    else if (allowSelfEscape && (c == ';' && cp1 != ';' || isEnd))
-                    {
-                        // end of start value
-                        var capturedValue = sb.ToString();
-                        sb.Clear();
-                        AddToResult(result, "Value", capturedValue);
-                        i++;
-                        isStart = false;
-                        isKey = true;
-                        sb.Append(cp1);
-                        continue;
-                    }
-                    else if (!allowSelfEscape && (c == ';' || isEnd))
-                    {
-                        // end of start value
-                        var capturedValue = sb.ToString();
-                        sb.Clear();
-                        AddToResult(result, "Value", capturedValue);
-                        isStart = false;
-                        isKey = true;
-                        continue;
-                    }
-                }
-                
-                if (isKey)
-                {
-                    if (allowSelfEscape && ((c == '=' && cp1 == '=') || (c == ';' && cp1 == ';')))
-                    {
-                        sb.Append(cp1);
-                        i++;
-                    }
-                    else if (!allowSelfEscape && ((c == '\\' && cp1 == '=') || (c == '\\' && cp1 == ';')))
-                    {
-                        sb.Append(cp1);
-                        i++;
-                    }
-                    else if ((c == ';' && cp1 != ';') || (c == ';' && cp1 == ';' && !allowSelfEscape) || isEnd)
-                    {
-                        if (isValue)
-                        {
-                            // end of start part
-                            var capturedValue = sb.ToString();
-                            sb.Clear();
-                            AddToResult(result, capturedKey, capturedValue);
-                        }
-                        else
-                        {
-                            capturedKey = sb.ToString();
-                            sb.Clear();
-                            AddToResult(result, capturedKey, null);
-                        }
+                bool isEqual = c2 == '=';
+                bool isSemi  = c2 == ';';
+                bool isAnti  = !allowSelfEscape && c2 == '\\'   // indicates the char is the escape char
+                            ||  allowSelfEscape && c2 == c3 && (c3 == '=' || c3 == ';');
+                bool isEscaped = !allowSelfEscape && c1 == '\\' // indicates the char is escaped
+                              ||  allowSelfEscape && c1 == c2;
 
-                        isValue = false;
-                        continue;
-                    }
-                    else if (c == '=' && cp1 != '=')
+                if (isEqual && !isEscaped && (isStart || isKey) && sb.Length > 0)
+                {
+                    // on equal sign, accept a key
+                    capturedKey = sb.ToString();
+                    sb.Clear();
+                    isStart = false;
+                    isKey = false;
+                    hasEqual = true;
+                }
+                else if (isSemi && !isAnti && !isEscaped || isEnd)
+                {
+                    // on semicolon/end sign, capture a key+value
+                    if (capturedKey != null)
                     {
-                        // end of start part
-                        capturedKey = sb.ToString();
-                        sb.Clear();
-                        isValue = true;
-                        isStart = false;
+                        capturedValue = sb.ToString();
                     }
                     else
                     {
-                        sb.Append(c);
+                        capturedKey = sb.ToString();
+                    }
+
+                    sb.Clear();
+                    AddToResult(result, capturedKey, capturedValue ?? (hasEqual ? string.Empty : null));
+                    capturedKey = capturedValue = null;
+                    isStart = false;
+                    isKey = true;
+                    hasEqual = false;
+                }
+                else
+                {
+                    if (escapeCounter == 1 && !isEqual && !isSemi)
+                    {
+                        // escaped escaping char
+                        sb.Append(c1);
+                    }
+
+                    if (isAnti)
+                    {
+                        // found escaping char, decide what to do at next iteration
+                        escapeCounter = 2;
+                    }
+                    else
+                    {
+                        // found a common char
+                        sb.Append(c2);
                     }
                 }
             }
