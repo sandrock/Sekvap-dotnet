@@ -48,7 +48,7 @@ namespace SrkSekvap
         }
 
         /// <summary>
-        /// EXPERIMENTAL. Enabling this will use the old self-escape rule. Not recommanded because not tested.
+        /// EXPERIMENTAL. Enabling this will use the old self-escape rule. Not recommended because not tested.
         /// </summary>
         public bool AllowSelfEscape
         {
