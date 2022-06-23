@@ -17,53 +17,50 @@
 
 namespace SrkSekvap.Tests
 {
+    using Newtonsoft.Json;
     using System;
     using System.Linq;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using SrkSekvap;
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
-    using Newtonsoft.Json;
     using System.Diagnostics;
+    using Xunit;
 
-    [TestClass]
     public class SekvapLanguageTests
     {
-        [TestClass]
         public class Ctor0
         {
-            [TestMethod]
+            [Fact]
             public void Works()
             {
                 new SekvapLanguage();
             }
         }
 
-        [TestClass]
         public class ParseMethod
         {
-            [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+            [Fact]
             public void NullInput()
             {
                 var lang = new SekvapLanguage();
                 string input = null;
-                lang.Parse(input);
+                Assert.Throws<ArgumentNullException>(() => lang.Parse(input));
             }
 
-            [TestMethod]
+            [Fact]
             public void NoValue()
             {
                 var lang = new SekvapLanguage();
                 string input = string.Empty;
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(1, result.Count);
-                Assert.AreEqual("Value", result[0].Key);
-                Assert.AreEqual(string.Empty, result[0].Value);
+                Assert.NotNull(result);
+                Assert.Equal(1, result.Count);
+                Assert.Equal("Value", result[0].Key);
+                Assert.Equal(string.Empty, result[0].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue()
             {
                 var lang = new SekvapLanguage();
@@ -73,13 +70,13 @@ namespace SrkSekvap.Tests
                 };
                 string input = parts[0];
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(1, result.Count);
-                Assert.AreEqual("Value", result[0].Key);
-                Assert.AreEqual(parts[0], result[0].Value);
+                Assert.NotNull(result);
+                Assert.Equal(1, result.Count);
+                Assert.Equal("Value", result[0].Key);
+                Assert.Equal(parts[0], result[0].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_Escape1()
             {
                 var lang = new SekvapLanguage();
@@ -89,14 +86,14 @@ namespace SrkSekvap.Tests
                 };
                 string input = parts[0];
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(1, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(1, result.Count);
 
-                Assert.AreEqual("Value", result[0].Key);
-                Assert.AreEqual(";", result[0].Value);
+                Assert.Equal("Value", result[0].Key);
+                Assert.Equal(";", result[0].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_Escape2()
             {
                 var lang = new SekvapLanguage();
@@ -106,14 +103,14 @@ namespace SrkSekvap.Tests
                 };
                 string input = parts[0];
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(1, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(1, result.Count);
 
-                Assert.AreEqual("Value", result[0].Key);
-                Assert.AreEqual(";aaa", result[0].Value);
+                Assert.Equal("Value", result[0].Key);
+                Assert.Equal(";aaa", result[0].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValueWithEscapedSeparator_Old()
             {
                 var lang = new SekvapLanguage();
@@ -124,14 +121,14 @@ namespace SrkSekvap.Tests
                 };
                 string input = parts[0];
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(1, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(1, result.Count);
 
-                Assert.AreEqual("Value", result[0].Key);
-                Assert.AreEqual("hello ; world", result[0].Value);
+                Assert.Equal("Value", result[0].Key);
+                Assert.Equal("hello ; world", result[0].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValueWithEscapedSeparator_Old_End()
             {
                 var lang = new SekvapLanguage();
@@ -142,14 +139,14 @@ namespace SrkSekvap.Tests
                 };
                 string input = parts[0];
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(1, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(1, result.Count);
 
-                Assert.AreEqual("Value", result[0].Key);
-                Assert.AreEqual("hello;", result[0].Value);
+                Assert.Equal("Value", result[0].Key);
+                Assert.Equal("hello;", result[0].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValueWithEscapedSeparator_Old_Begin()
             {
                 var lang = new SekvapLanguage();
@@ -160,14 +157,14 @@ namespace SrkSekvap.Tests
                 };
                 string input = parts[0];
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(1, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(1, result.Count);
 
-                Assert.AreEqual("Value", result[0].Key);
-                Assert.AreEqual(";hello", result[0].Value);
+                Assert.Equal("Value", result[0].Key);
+                Assert.Equal(";hello", result[0].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValueWithEscapedSeparator()
             {
                 var lang = new SekvapLanguage();
@@ -177,20 +174,20 @@ namespace SrkSekvap.Tests
                 };
                 string input = parts[0];
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
 
-                Assert.AreEqual("Value", result[0].Key);
-                Assert.AreEqual("hello ", result[0].Value);
+                Assert.Equal("Value", result[0].Key);
+                Assert.Equal("hello ", result[0].Value);
 
-                Assert.AreEqual(string.Empty, result[1].Key);
-                Assert.AreEqual(null, result[1].Value);
+                Assert.Equal(string.Empty, result[1].Key);
+                Assert.Equal(null, result[1].Value);
 
-                Assert.AreEqual(" world", result[2].Key);
-                Assert.AreEqual(null, result[2].Value);
+                Assert.Equal(" world", result[2].Key);
+                Assert.Equal(null, result[2].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneKevap()
             {
                 var lang = new SekvapLanguage();
@@ -201,16 +198,16 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(2, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(parts[4], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(parts[4], result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneKevap_OneEscapedKey1()
             {
                 var lang = new SekvapLanguage();
@@ -221,18 +218,18 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(2, result.Count);
                 int i = -1;
 
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
 
-                Assert.AreEqual("Na;me", result[++i].Key);
-                Assert.AreEqual(parts[4], result[i].Value);
+                Assert.Equal("Na;me", result[++i].Key);
+                Assert.Equal(parts[4], result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneKevap_OneEscapedKey2()
             {
                 var lang = new SekvapLanguage();
@@ -243,18 +240,18 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(2, result.Count);
                 int i = -1;
 
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
 
-                Assert.AreEqual("Name;", result[++i].Key);
-                Assert.AreEqual(parts[4], result[i].Value);
+                Assert.Equal("Name;", result[++i].Key);
+                Assert.Equal(parts[4], result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneKevap_OneEscapedKey3()
             {
                 var lang = new SekvapLanguage();
@@ -265,18 +262,18 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(2, result.Count);
                 int i = -1;
 
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
 
-                Assert.AreEqual(";Name", result[++i].Key);
-                Assert.AreEqual(parts[4], result[i].Value);
+                Assert.Equal(";Name", result[++i].Key);
+                Assert.Equal(parts[4], result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneKevap_OneEscapedValue()
             {
                 var lang = new SekvapLanguage();
@@ -287,18 +284,18 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(2, result.Count);
                 int i = -1;
 
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
 
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual("John;Smith", result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal("John;Smith", result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusTwoKevap()
             {
                 var lang = new SekvapLanguage();
@@ -310,18 +307,18 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(parts[4], result[i].Value);
-                Assert.AreEqual(parts[6], result[++i].Key);
-                Assert.AreEqual(parts[8], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(parts[4], result[i].Value);
+                Assert.Equal(parts[6], result[++i].Key);
+                Assert.Equal(parts[8], result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneEmptyKevap()
             {
                 var lang = new SekvapLanguage();
@@ -332,16 +329,16 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(2, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(null, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneEmptyEqualKevap()
             {
                 var lang = new SekvapLanguage();
@@ -352,85 +349,85 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(2, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(string.Empty, result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(string.Empty, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleEmptyValue_PlusTwoKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
                 {
                     "hello world",
-                    ";", "Name", 
+                    ";", "Name",
                     ";", "Foo", "=", "Bar",
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
-                Assert.AreEqual(parts[4], result[++i].Key);
-                Assert.AreEqual(parts[6], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(null, result[i].Value);
+                Assert.Equal(parts[4], result[++i].Key);
+                Assert.Equal(parts[6], result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleEmptyEqualValue_PlusTwoKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
                 {
                     "hello world",
-                    ";", "Name", "=", 
+                    ";", "Name", "=",
                     ";", "Foo", "=", "Bar",
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(string.Empty, result[i].Value);
-                Assert.AreEqual(parts[5], result[++i].Key);
-                Assert.AreEqual(parts[7], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(string.Empty, result[i].Value);
+                Assert.Equal(parts[5], result[++i].Key);
+                Assert.Equal(parts[7], result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusTwoEmptyKevap()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
                 {
                     "hello world",
-                    ";", "Name", 
+                    ";", "Name",
                     ";", "Foo",
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
-                Assert.AreEqual(parts[4], result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(null, result[i].Value);
+                Assert.Equal(parts[4], result[++i].Key);
+                Assert.Equal(null, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusTwoEmptyEqualKevap()
             {
                 var lang = new SekvapLanguage();
@@ -442,18 +439,18 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(string.Empty, result[i].Value);
-                Assert.AreEqual(parts[5], result[++i].Key);
-                Assert.AreEqual(string.Empty, result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(string.Empty, result[i].Value);
+                Assert.Equal(parts[5], result[++i].Key);
+                Assert.Equal(string.Empty, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneEmptyKevapAndOneEmptyEqualKevap()
             {
                 var lang = new SekvapLanguage();
@@ -465,18 +462,18 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
-                Assert.AreEqual(parts[4], result[++i].Key);
-                Assert.AreEqual(string.Empty, result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(null, result[i].Value);
+                Assert.Equal(parts[4], result[++i].Key);
+                Assert.Equal(string.Empty, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void SimpleValue_PlusOneEmptyKevap_EndsWithSemicolon()
             {
                 var lang = new SekvapLanguage();
@@ -488,49 +485,49 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(null, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void ConnectionString1()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
                 {
-                    "Data Source", "=", "myServerAddress", ";", 
-                    "Initial Catalog", "=", "myDataBase", ";", 
-                    "Integrated Security", "=", "SSPI", ";", 
-                    "User ID", "=", "myDomain\\myUsername", ";", 
+                    "Data Source", "=", "myServerAddress", ";",
+                    "Initial Catalog", "=", "myDataBase", ";",
+                    "Integrated Security", "=", "SSPI", ";",
+                    "User ID", "=", "myDomain\\myUsername", ";",
                     "Password", "=", "myPass\\=word", ";",
                 };
                 string input = string.Concat(parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(6, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(6, result.Count);
                 int i = -1;
-                ////Assert.AreEqual("Value", result[++i].Key); // Value = 
-                ////Assert.AreEqual(null, result[i].Value); //       = null
-                Assert.AreEqual(parts[0], result[++i].Key); // Data Source = 
-                Assert.AreEqual(parts[2], result[i].Value); //             = myServerAddress
-                Assert.AreEqual(parts[4], result[++i].Key); // Initial Catalog = 
-                Assert.AreEqual(parts[6], result[i].Value); //                 = myDataBase
-                Assert.AreEqual(parts[8], result[++i].Key); // Integrated Security = 
-                Assert.AreEqual(parts[10], result[i].Value); //                     = SSPI
-                Assert.AreEqual(parts[12], result[++i].Key); // User ID =
-                Assert.AreEqual(parts[14], result[i].Value); //         = myDomain\\myUsername
-                Assert.AreEqual(parts[16], result[++i].Key); // Password = 
-                Assert.AreEqual("myPass=word", result[i].Value); //          = myPass=word
-                Assert.AreEqual("", result[++i].Key); // "" = 
-                Assert.AreEqual(null, result[i].Value); //       = null
+                ////Assert.Equal("Value", result[++i].Key); // Value = 
+                ////Assert.Equal(null, result[i].Value); //       = null
+                Assert.Equal(parts[0], result[++i].Key); // Data Source = 
+                Assert.Equal(parts[2], result[i].Value); //             = myServerAddress
+                Assert.Equal(parts[4], result[++i].Key); // Initial Catalog = 
+                Assert.Equal(parts[6], result[i].Value); //                 = myDataBase
+                Assert.Equal(parts[8], result[++i].Key); // Integrated Security = 
+                Assert.Equal(parts[10], result[i].Value); //                     = SSPI
+                Assert.Equal(parts[12], result[++i].Key); // User ID =
+                Assert.Equal(parts[14], result[i].Value); //         = myDomain\\myUsername
+                Assert.Equal(parts[16], result[++i].Key); // Password = 
+                Assert.Equal("myPass=word", result[i].Value); //          = myPass=word
+                Assert.Equal("", result[++i].Key); // "" = 
+                Assert.Equal(null, result[i].Value); //       = null
             }
 
-            [TestMethod]
+            [Fact]
             public void ConsecutiveEmptyKevap1()
             {
                 var lang = new SekvapLanguage();
@@ -542,29 +539,30 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
 
                 // "Value" == "hello world"
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
 
                 // "Name" == null
-                Assert.AreEqual(parts[2], result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(parts[2], result[++i].Key);
+                Assert.Equal(null, result[i].Value);
 
                 // "" == null
-                Assert.AreEqual(string.Empty, result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(string.Empty, result[++i].Key);
+                Assert.Equal(null, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void ConsecutiveEmptyKevap2()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
-                { // hello world;Name;;
+                {
+                    // hello world;Name;;
                     "hello world",
                     ";", "Name",
                     ";",
@@ -572,33 +570,34 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(4, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(4, result.Count);
                 int i = -1;
 
                 // "Value" == "hello world"
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
 
                 // "Name;;" == null
-                Assert.AreEqual("Name", result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal("Name", result[++i].Key);
+                Assert.Equal(null, result[i].Value);
 
                 // "" == null
-                Assert.AreEqual(string.Empty, result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(string.Empty, result[++i].Key);
+                Assert.Equal(null, result[i].Value);
 
                 // "" == null
-                Assert.AreEqual(string.Empty, result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(string.Empty, result[++i].Key);
+                Assert.Equal(null, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void ConsecutiveEmptyKevap3()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
-                { // hello world;Name=;;
+                {
+                    // hello world;Name=;;
                     "hello world",
                     ";", "Name", "=",
                     ";",
@@ -606,33 +605,34 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(4, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(4, result.Count);
                 int i = -1;
 
                 // "Value" == "hello world"
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
 
                 // "Name" == ";"
-                Assert.AreEqual("Name", result[++i].Key);
-                Assert.AreEqual(string.Empty, result[i].Value);
+                Assert.Equal("Name", result[++i].Key);
+                Assert.Equal(string.Empty, result[i].Value);
 
                 // "" == null
-                Assert.AreEqual(string.Empty, result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(string.Empty, result[++i].Key);
+                Assert.Equal(null, result[i].Value);
 
                 // "" == null
-                Assert.AreEqual(string.Empty, result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(string.Empty, result[++i].Key);
+                Assert.Equal(null, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void ConsecutiveEmptyKevap4()
             {
                 var lang = new SekvapLanguage();
                 var parts = new string[]
-                { // hello world;Name=;;;
+                {
+                    // hello world;Name=;;;
                     "hello world",
                     ";", "Name", "=",
                     ";",
@@ -641,131 +641,130 @@ namespace SrkSekvap.Tests
                 };
                 string input = string.Join(string.Empty, parts);
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(5, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(5, result.Count);
                 int i = -1;
 
                 // "Value" == "hello world"
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual(parts[0], result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal(parts[0], result[i].Value);
 
                 // "Name" == ";"
-                Assert.AreEqual("Name", result[++i].Key);
-                Assert.AreEqual(string.Empty, result[i].Value);
+                Assert.Equal("Name", result[++i].Key);
+                Assert.Equal(string.Empty, result[i].Value);
 
                 // "" == null
-                Assert.AreEqual(string.Empty, result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(string.Empty, result[++i].Key);
+                Assert.Equal(null, result[i].Value);
 
                 // "" == null
-                Assert.AreEqual(string.Empty, result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(string.Empty, result[++i].Key);
+                Assert.Equal(null, result[i].Value);
 
                 // "" == null
-                Assert.AreEqual(string.Empty, result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal(string.Empty, result[++i].Key);
+                Assert.Equal(null, result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void EmptyKey0()
             {
                 // a key cannot be empty. so this is a key starting with the equa sign.
                 var lang = new SekvapLanguage();
                 var input = "helo;=b;x=y";
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
 
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual("helo", result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal("helo", result[i].Value);
 
-                Assert.AreEqual("=b", result[++i].Key);
-                Assert.AreEqual(null, result[i].Value);
+                Assert.Equal("=b", result[++i].Key);
+                Assert.Equal(null, result[i].Value);
 
-                Assert.AreEqual("x", result[++i].Key);
-                Assert.AreEqual("y", result[i].Value);
+                Assert.Equal("x", result[++i].Key);
+                Assert.Equal("y", result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void EqualSignInValue0()
             {
                 var lang = new SekvapLanguage();
                 var input = "=8;x=y";
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(2, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(2, result.Count);
                 int i = -1;
 
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual("=8", result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal("=8", result[i].Value);
 
-                Assert.AreEqual("x", result[++i].Key);
-                Assert.AreEqual("y", result[i].Value);
+                Assert.Equal("x", result[++i].Key);
+                Assert.Equal("y", result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void EqualSignInValue1()
             {
                 var lang = new SekvapLanguage();
                 var input = "helo;Comp==8;x=y";
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
 
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual("helo", result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal("helo", result[i].Value);
 
-                Assert.AreEqual("Comp", result[++i].Key);
-                Assert.AreEqual("=8", result[i].Value);
+                Assert.Equal("Comp", result[++i].Key);
+                Assert.Equal("=8", result[i].Value);
 
-                Assert.AreEqual("x", result[++i].Key);
-                Assert.AreEqual("y", result[i].Value);
+                Assert.Equal("x", result[++i].Key);
+                Assert.Equal("y", result[i].Value);
             }
 
-            [TestMethod]
+            [Fact]
             public void EqualSignInValue2()
             {
                 var lang = new SekvapLanguage();
                 var input = "helo;Comp=<=8;x=y";
                 var result = lang.Parse(input);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(3, result.Count);
+                Assert.NotNull(result);
+                Assert.Equal(3, result.Count);
                 int i = -1;
 
-                Assert.AreEqual("Value", result[++i].Key);
-                Assert.AreEqual("helo", result[i].Value);
+                Assert.Equal("Value", result[++i].Key);
+                Assert.Equal("helo", result[i].Value);
 
-                Assert.AreEqual("Comp", result[++i].Key);
-                Assert.AreEqual("<=8", result[i].Value);
+                Assert.Equal("Comp", result[++i].Key);
+                Assert.Equal("<=8", result[i].Value);
 
-                Assert.AreEqual("x", result[++i].Key);
-                Assert.AreEqual("y", result[i].Value);
+                Assert.Equal("x", result[++i].Key);
+                Assert.Equal("y", result[i].Value);
             }
         }
 
-        [TestClass]
         public class SerializeEnumerableMethod
         {
-            [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+            [Fact]
             public void Arg0IsNull_Throws()
             {
                 var target = new SekvapLanguage();
-                target.Serialize(default(IEnumerable<KeyValuePair<string, string>>));
+                Assert.Throws<ArgumentNullException>(() => target.Serialize(default(IEnumerable<KeyValuePair<string, string>>)));
             }
 
-            [TestMethod]
+            [Fact]
             public void NoValues()
             {
                 var source = new List<KeyValuePair<string, string>>();
                 var target = new SekvapLanguage();
                 var result = target.Serialize(source.AsEnumerable());
-                Assert.IsNotNull(result);
-                Assert.AreEqual(0, result.Length);
+                Assert.NotNull(result);
+                Assert.Equal(0, result.Length);
             }
 
-            [TestMethod]
+            [Fact]
             public void EmptyValues1()
             {
                 var source = new List<KeyValuePair<string, string>>();
@@ -773,27 +772,27 @@ namespace SrkSekvap.Tests
                 var target = new SekvapLanguage();
 
                 var result = target.Serialize(source.AsEnumerable());
-                Assert.IsNotNull(result);
-                Assert.AreEqual(0, result.Length);
+                Assert.NotNull(result);
+                Assert.Equal(0, result.Length);
 
                 target.SkipSerializeEmpty = false;
                 var result1 = target.Serialize(source.AsEnumerable());
-                Assert.IsNotNull(result1);
-                Assert.AreEqual(0, result.Length);
+                Assert.NotNull(result1);
+                Assert.Equal(0, result.Length);
             }
 
-            [TestMethod]
+            [Fact]
             public void Value()
             {
                 var source = new Dictionary<string, string>();
                 source.Add("Value", "Hello");
                 var target = new SekvapLanguage();
                 var result = target.Serialize(source.AsEnumerable());
-                Assert.IsNotNull(result);
-                Assert.AreEqual("Hello", result);
+                Assert.NotNull(result);
+                Assert.Equal("Hello", result);
             }
 
-            [TestMethod]
+            [Fact]
             public void Value_Item()
             {
                 var source = new Dictionary<string, string>();
@@ -801,11 +800,11 @@ namespace SrkSekvap.Tests
                 source.Add("Foo", "Bar");
                 var target = new SekvapLanguage();
                 var result = target.Serialize(source.AsEnumerable());
-                Assert.IsNotNull(result);
-                Assert.AreEqual("Hello;Foo=Bar", result);
+                Assert.NotNull(result);
+                Assert.Equal("Hello;Foo=Bar", result);
             }
 
-            [TestMethod]
+            [Fact]
             public void Value_Item_Value()
             {
                 var source = new List<KeyValuePair<string, string>>();
@@ -814,43 +813,42 @@ namespace SrkSekvap.Tests
                 source.Add(new KeyValuePair<string, string>("Value", "Yop"));
                 var target = new SekvapLanguage();
                 var result = target.Serialize(source.AsEnumerable());
-                Assert.IsNotNull(result);
-                Assert.AreEqual("Hello;Foo=Bar;Value=Yop", result);
+                Assert.NotNull(result);
+                Assert.Equal("Hello;Foo=Bar;Value=Yop", result);
             }
         }
 
-        [TestClass]
         public class SerializeCollectionMethod
         {
-            [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+            [Fact]
             public void Arg0IsNull_Throws()
             {
                 var target = new SekvapLanguage();
-                target.Serialize(default(ICollection<KeyValuePair<string, string>>));
+                Assert.Throws<ArgumentNullException>(() => target.Serialize(default(ICollection<KeyValuePair<string, string>>)));
             }
 
-            [TestMethod]
+            [Fact]
             public void NoValues()
             {
                 var source = new List<KeyValuePair<string, string>>();
                 var target = new SekvapLanguage();
                 var result = target.Serialize(source);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(0, result.Length);
+                Assert.NotNull(result);
+                Assert.Equal(0, result.Length);
             }
 
-            [TestMethod]
+            [Fact]
             public void Value()
             {
                 var source = new Dictionary<string, string>();
                 source.Add("Value", "Hello");
                 var target = new SekvapLanguage();
                 var result = target.Serialize(source);
-                Assert.IsNotNull(result);
-                Assert.AreEqual("Hello", result);
+                Assert.NotNull(result);
+                Assert.Equal("Hello", result);
             }
 
-            [TestMethod]
+            [Fact]
             public void Value_Item()
             {
                 var source = new Dictionary<string, string>();
@@ -858,11 +856,11 @@ namespace SrkSekvap.Tests
                 source.Add("Foo", "Bar");
                 var target = new SekvapLanguage();
                 var result = target.Serialize(source);
-                Assert.IsNotNull(result);
-                Assert.AreEqual("Hello;Foo=Bar", result);
+                Assert.NotNull(result);
+                Assert.Equal("Hello;Foo=Bar", result);
             }
 
-            [TestMethod]
+            [Fact]
             public void Value_Item_Value()
             {
                 var source = new List<KeyValuePair<string, string>>();
@@ -871,12 +869,12 @@ namespace SrkSekvap.Tests
                 source.Add(new KeyValuePair<string, string>("Value", "Yop"));
                 var target = new SekvapLanguage();
                 var result = target.Serialize(source);
-                Assert.IsNotNull(result);
-                Assert.AreEqual("Hello;Foo=Bar;Value=Yop", result);
+                Assert.NotNull(result);
+                Assert.Equal("Hello;Foo=Bar;Value=Yop", result);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void ParseTests()
         {
             var assembly = typeof(SekvapLanguageTests).Assembly;
@@ -986,7 +984,7 @@ namespace SrkSekvap.Tests
                         }
                         else
                         {
-                            error(line, col, input, "Key should be '" + key+ "'; not '" + result[col].Key + "'. ");
+                            error(line, col, input, "Key should be '" + key + "'; not '" + result[col].Key + "'. ");
                         }
                     }
                     else
@@ -1033,7 +1031,10 @@ namespace SrkSekvap.Tests
             lite.Insert(0, message);
             full.Insert(0, message);
             Debug.WriteLine(full.ToString());
-            Assert.AreEqual(0, errors, errors + " errors\r\n\r\n" + lite.ToString());
+            if (errors > 0)
+            {
+                throw new InvalidOperationException(errors + " errors\r\n\r\n" + lite.ToString());
+            }
         }
 
         class Test
