@@ -39,10 +39,12 @@ namespace SrkSekvap
         /// </summary>
         private static readonly char[] valueChars = new char[] { ';', };
 
-        private const char escape = '\\';
+        private bool allowSelfEscape;
 
-        private bool allowSelfEscape = false;
-
+        /// <summary>
+        /// Sekvap serializer.
+        /// See https://github.com/sandrock/Sekvap-dotnet for more information.
+        /// </summary>
         public SekvapLanguage()
         {
         }
@@ -61,6 +63,32 @@ namespace SrkSekvap
         /// </summary>
         public bool SkipSerializeEmpty { get; set; } = true;
 
+        /// <summary>
+        /// Sets whether to remove whitespaces at the start of the keys. 
+        /// </summary>
+        public bool TrimKeyStart { get; set; }
+
+        /// <summary>
+        /// Sets whether to remove whitespaces at the end of the keys. 
+        /// </summary>
+        public bool TrimKeyEnd { get; set; }
+
+        /// <summary>
+        /// Sets whether to remove whitespaces at the start of the values. 
+        /// </summary>
+        public bool TrimValueStart { get; set; }
+
+        /// <summary>
+        /// Sets whether to remove whitespaces at the end of the values. 
+        /// </summary>
+        public bool TrimValueEnd { get; set; }
+
+        /// <summary>
+        /// Adds a pair of key and value to an existing collection. 
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public static void AddToResult(IList<KeyValuePair<string, string>> collection, string key, string value)
         {
             collection.Add(new KeyValuePair<string, string>(key, value));
@@ -77,7 +105,7 @@ namespace SrkSekvap
                 throw new ArgumentNullException("value");
 
             var result = new List<KeyValuePair<string, string>>();
-            bool isStart = true, isKey = false, isEnd = false;
+            bool isStart = true, isKey = false, isEnd;
             string capturedKey = "Value", capturedValue = null;
             var sb = new StringBuilder();
             char c1, c2, c3;
@@ -103,7 +131,7 @@ namespace SrkSekvap
                 if (isEqual && !isEscaped && (isStart || isKey) && sb.Length > 0)
                 {
                     // on equal sign, accept a key
-                    capturedKey = sb.ToString();
+                    capturedKey = this.TrimKey(sb.ToString());
                     sb.Clear();
                     isStart = false;
                     isKey = false;
@@ -114,11 +142,11 @@ namespace SrkSekvap
                     // on semicolon/end sign, capture a key+value
                     if (capturedKey != null)
                     {
-                        capturedValue = sb.ToString();
+                        capturedValue = this.TrimValue(sb.ToString());
                     }
                     else
                     {
-                        capturedKey = sb.ToString();
+                        capturedKey = this.TrimKey(sb.ToString());
                     }
 
                     sb.Clear();
@@ -297,6 +325,46 @@ namespace SrkSekvap
             }
 
             return sb.ToString();
+        }
+
+        private string TrimKey(string key)
+        {
+            if (this.TrimKeyStart && this.TrimKeyEnd)
+            {
+                return key.Trim();
+            }
+            else if (this.TrimKeyStart)
+            {
+                return key.TrimStart();
+            }
+            else if (this.TrimKeyEnd)
+            {
+                return key.TrimEnd();
+            }
+            else
+            {
+                return key;
+            }
+        }
+
+        private string TrimValue(string value)
+        {
+            if (this.TrimValueStart && this.TrimValueEnd)
+            {
+                return value.Trim();
+            }
+            else if (this.TrimValueStart)
+            {
+                return value.TrimStart();
+            }
+            else if (this.TrimValueEnd)
+            {
+                return value.TrimEnd();
+            }
+            else
+            {
+                return value;
+            }
         }
     }
 }

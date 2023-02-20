@@ -743,6 +743,68 @@ namespace SrkSekvap.Tests
                 Assert.Equal("x", result[++i].Key);
                 Assert.Equal("y", result[i].Value);
             }
+
+            [Fact]
+            public void FullTrim()
+            {
+                var lang = new SekvapLanguage();
+                lang.TrimKeyStart = true;
+                lang.TrimKeyEnd = true;
+                lang.TrimValueStart = true;
+                lang.TrimValueEnd = true;
+                var input = "Key1=Value1;   Key2  = Value2 ;\tKey3\t=\tX\t\t";
+                var result = lang.Parse(input);
+
+                int i = -1;
+                Assert.Equal("Key1", result[++i].Key);
+                Assert.Equal("Value1", result[i].Value);
+
+                Assert.Equal("Key2", result[++i].Key);
+                Assert.Equal("Value2", result[i].Value);
+
+                Assert.Equal("Key3", result[++i].Key);
+                Assert.Equal("X", result[i].Value);
+            }
+
+            [Fact]
+            public void TrimLeft()
+            {
+                var lang = new SekvapLanguage();
+                lang.TrimKeyStart = true;
+                lang.TrimValueStart = true;
+                var input = "Key1=Value1;   Key2  = Value2 ;\tKey3\t=\tX\t\t";
+                var result = lang.Parse(input);
+
+                int i = -1;
+                Assert.Equal("Key1", result[++i].Key);
+                Assert.Equal("Value1", result[i].Value);
+
+                Assert.Equal("Key2  ", result[++i].Key);
+                Assert.Equal("Value2 ", result[i].Value);
+
+                Assert.Equal("Key3\t", result[++i].Key);
+                Assert.Equal("X\t\t", result[i].Value);
+            }
+
+            [Fact]
+            public void TrimRight()
+            {
+                var lang = new SekvapLanguage();
+                lang.TrimKeyEnd = true;
+                lang.TrimValueEnd = true;
+                var input = "Key1=Value1;   Key2  = Value2 ;\tKey3\t=\tX\t\t";
+                var result = lang.Parse(input);
+
+                int i = -1;
+                Assert.Equal("Key1", result[++i].Key);
+                Assert.Equal("Value1", result[i].Value);
+
+                Assert.Equal("   Key2", result[++i].Key);
+                Assert.Equal(" Value2", result[i].Value);
+
+                Assert.Equal("\tKey3", result[++i].Key);
+                Assert.Equal("\tX", result[i].Value);
+            }
         }
 
         public class SerializeEnumerableMethod

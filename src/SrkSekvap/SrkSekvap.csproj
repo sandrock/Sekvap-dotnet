@@ -21,13 +21,13 @@ License: LGPL.</Description>
     <PackageProjectUrl>https://github.com/sandrock/Sekvap-dotnet/</PackageProjectUrl>
     <PackageIcon>logo-200.png</PackageIcon>
     <PackageTags>serializer sekvap key-value</PackageTags>
-    <PackageReleaseNotes>support for netstandard2.0</PackageReleaseNotes>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <FileVersion>2.1.0.0</FileVersion>
+    <PackageReleaseNotes>Optional whitespace trimming of keys and values</PackageReleaseNotes>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.2.0.0</FileVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
     <PublicSign>false</PublicSign>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
