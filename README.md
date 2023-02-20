@@ -57,6 +57,7 @@ Sekvap is lighter than JSON or XML. It does not provide any depth though.
 
 You can parse .net connection strings with it.
 
+
 Install
 --------------
 
@@ -65,6 +66,7 @@ Install
 ```
 > Install-Package SrkSekvap
 ```
+
 
 To Do list
 --------------
@@ -82,4 +84,13 @@ Contribute
 
 Open to contributions via issues and PRs.
 
+
+Publishing
+--------------
+
+- Commit
+- change assenbly version and nuget version
+- write release notes
+- make a Release build
+- `nuget.exe push -src https://api.nuget.org/v3/index.json  -apikey xxx  src/SrkSekvap/bin/Release/SrkSekvap.X.X.X.nupkg`
 
